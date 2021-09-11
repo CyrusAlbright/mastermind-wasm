@@ -15,6 +15,8 @@ How to play:
 
 It's guaranteed to guess your code within 5 guesses.
 
+## Run locally
+
 ### Build
 
 ```
