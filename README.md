@@ -1,55 +1,28 @@
 <div align="center">
 	<h1><code>mastermind-wasm</code></h1>
-	<strong>The classic puzzle game Mastermind, written in Rust WebAssembly and Svelte. <a href="https://github.com/rustwasm/wasm-pack">wasm-pack</a>.</strong>
+	<strong>The classic puzzle game Mastermind, written in Rust WebAssembly and Svelte.</strong>
 </div>
 
 ## About
 
-[**📚 Read this template tutorial! 📚**][template-docs]
+Try it live on <a href="https://cyrusalbright.github.io">my github.io page</a>!
 
-This template is designed for compiling Rust libraries into WebAssembly and
-publishing the resulting package to NPM.
+How to play:
+- Come up with a code (and optionally mark it down at the bottom by selecting your colors and placing them in the slots)
+- Press next to get the next guess
+- Mark the amount of red and white pegs next to the computer's guess
+- Repeat!
 
-Be sure to check out [other `wasm-pack` tutorials online][tutorials] for other
-templates and usages of `wasm-pack`.
+It's guaranteed to guess your code within 5 guesses.
 
-[tutorials]: https://rustwasm.github.io/docs/wasm-pack/tutorials/index.html
-[template-docs]: https://rustwasm.github.io/docs/wasm-pack/tutorials/npm-browser-packages/index.html
-
-## 🚴 Usage
-
-### 🐑 Use `cargo generate` to Clone this Template
-
-[Learn more about `cargo generate` here.](https://github.com/ashleygwilliams/cargo-generate)
-
-```
-cargo generate --git https://github.com/rustwasm/wasm-pack-template.git --name my-project
-cd my-project
-```
-
-### 🛠️ Build with `wasm-pack build`
+### Build
 
 ```
 wasm-pack build
 ```
 
-### 🔬 Test in Headless Browsers with `wasm-pack test`
+### Test
 
 ```
-wasm-pack test --headless --firefox
+cargo test
 ```
-
-### 🎁 Publish to NPM with `wasm-pack publish`
-
-```
-wasm-pack publish
-```
-
-## 🔋 Batteries Included
-
-* [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen) for communicating
-  between WebAssembly and JavaScript.
-* [`console_error_panic_hook`](https://github.com/rustwasm/console_error_panic_hook)
-  for logging panic messages to the developer console.
-* [`wee_alloc`](https://github.com/rustwasm/wee_alloc), an allocator optimized
-  for small code size.
