@@ -23,14 +23,22 @@ I really enjoy using Rust, and since it has built-in support for compiling to We
 
 ## Run locally
 
-### Build
+### Build the WASM package
 
 ```
 wasm-pack build
 ```
 
-### Test
+### Test the algorithm
 
 ```
 cargo test
+```
+
+### Webpack test server
+
+```
+cd webpack
+npm install
+npm run dev
 ```
