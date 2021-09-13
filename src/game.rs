@@ -1,7 +1,7 @@
 use crate::*;
 
 #[wasm_bindgen]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct Game {
 	remaining_possible_codes: [bool; NUM_CODES as usize],
 	num_remaining_possible_codes: u32,
@@ -26,14 +26,6 @@ impl Game {
 		*self = Game::new();
 	}
 
-	// pub fn most_recent_guess(&self) -> Code {
-	// 	if self.guesses_made == 0 {
-	// 		panic!("No guesses made");
-	// 	}
-
-	// 	self.guesses[(self.guesses_made - 1) as usize].expect("Guess array mismatched with total guesses made")
-	// }
-
 	pub fn print_num_possible_codes(&self) {
 		web_sys::console::log_2(&"Num remaining possible codes: ".into(), &self.num_remaining_possible_codes.into());
 	}
@@ -51,22 +43,27 @@ impl Game {
 	}
 
 	pub fn rollback(&mut self, num_guesses_rollback: u32) {
+		/*
+		to ensure rollbacks never put the game in an invalid state,
+		create a new game state and simulate the user inputting
+		everything up to the rollback point
+
+		only possible since the system is deterministic
+
+		not computationally expensive
+		*/
+		let mut new_state = Game::new();
+		
 		// if it would underflow, make sure it stays at 0
-		self.guesses_made = self.guesses_made.checked_sub(num_guesses_rollback).map_or(0, |x| x);
+		new_state.guesses_made = self.guesses_made.checked_sub(num_guesses_rollback).map_or(0, |x| x);
 
-		for i in self.guesses_made..MAX_GUESSES {
-			self.guesses[i as usize] = None;
-			self.keys[i as usize] = None;
+		for i in 0..new_state.guesses_made as usize {
+			new_state.guesses[i] = self.guesses[i];
+			new_state.keys[i] = self.keys[i];
+			new_state.prune(&new_state.guesses[i as usize].expect("Unexpected None value in guesses"), &new_state.keys[i as usize].expect("Unexpected None value in keys"));
 		}
 
-		for (number, _code) in CodeIterator::new() {
-			self.remaining_possible_codes[number as usize] = true;
-		}
-		self.num_remaining_possible_codes = NUM_CODES;
-
-		for i in 0..self.guesses_made {
-			self.prune(&self.guesses[i as usize].expect("Unexpected None value in guesses"), &self.keys[i as usize].expect("Unexpected None value in keys"));
-		}
+		*self = new_state;
 	}
 
 	pub fn prune(&mut self, guess: &Code, key: &Key) {
@@ -190,5 +187,24 @@ mod tests {
 		game.prune(&code, &key);
 
 		assert_eq!(game.num_remaining_possible_codes, 1);
+	}
+
+	#[test]
+	fn game_rollbacks() {
+		let code = Code([2, 4, 1, 2]);
+
+		let mut game = Game::new();
+
+		let guess = game.next_guess();
+		game.user_input(Key::from_code_and_guess(&code, &guess));
+
+		let game_rollback_expected = game.clone();
+
+		let guess = game.next_guess();
+		game.user_input(Key::from_code_and_guess(&code, &guess));
+
+		game.rollback(1);
+
+		assert_eq!(game, game_rollback_expected);
 	}
 }
